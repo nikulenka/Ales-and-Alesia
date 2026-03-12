@@ -1,16 +1,25 @@
 # 🏢 Платформа ЖКУ-агентов v2
 
-LangGraph + LangChain + Pydantic. Диспетчер + 4 специализированных агента.
+LangGraph + LangChain + Pydantic + Streamlit. Диспетчер + 4 специализированных агента.
 Базы знаний — в YAML, редактируются специалистами без кода.
 
 ---
 
 ## Быстрый старт
 
+1. Установите зависимости:
 ```bash
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY="sk-ant-..."
-python app.py
+```
+
+2. Настройте файл `.env` (или экспортируйте переменные):
+```bash
+OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
+3. Запустите приложение через Streamlit:
+```bash
+streamlit run app.py
 ```
 
 ---
@@ -18,24 +27,27 @@ python app.py
 ## Структура
 
 ```
-jku_platform/
+Ales-and-Alesia/
 │
-├── app.py                        # Точка входа: загрузка + запуск
+├── app.py                        # Точка входа (Streamlit UI)
+├── .env                          # Конфигурация API ключей
 │
 ├── core/                         # Общее ядро — не трогать специалистам
 │   ├── models.py                 # Все Pydantic-модели платформы
 │   ├── kb_loader.py              # Загрузка YAML → Pydantic + валидация
 │   ├── base_tools.py             # 5 общих tools для всех агентов
-│   └── base_agent.py             # Фабрика: build_service_agent(kb)
+│   └── base_agent.py             # Фабрика агентов и настройка LLM (OpenRouter)
 │
 ├── dispatcher/
-│   └── agent.py                  # Агент-диспетчер: определяет тему → маршрутизирует
+│   └── agent.py                  # Агент-диспетчер: маршрутизация запросов
 │
-└── services/
-    ├── hvs/kb/knowledge_base.yaml         # ГВС ← редактирует специалист ГВС
-    ├── heating/kb/knowledge_base.yaml     # Отопление ← редактирует теплотехник
-    ├── cold_water/kb/knowledge_base.yaml  # ХВС/Канализация ← редактирует сантехник
-    └── electricity/kb/knowledge_base.yaml # Электричество ← редактирует электрик
+├── services/                     # Базы знаний по сервисам
+│   ├── hvs/kb/...
+│   ├── heating/kb/...
+│   ├── cold_water/kb/...
+│   └── electricity/kb/...
+│
+└── clean_kbs.py                  # Утилита для очистки YAML от Python-тегов
 ```
 
 ---
@@ -46,7 +58,8 @@ jku_platform/
 2. Скопировать любой `knowledge_base.yaml` как шаблон
 3. Заполнить симптомы и причины
 4. Добавить `ServiceType.MY_SERVICE = "my_service"` в `core/models.py`
-5. Всё — `load_all_kbs()` подхватит автоматически
+5. **Важно:** Добавить описание новой службы в `DISPATCHER_PROMPT` внутри `dispatcher/agent.py`, чтобы диспетчер мог направлять туда заявки.
+6. Всё — `load_all_kbs()` подхватит базу автоматически.
 
 ---
 
@@ -68,16 +81,11 @@ jku_platform/
   resolution: Что делать агенту/диспетчеру
 ```
 
-**После правок** установите:
-```yaml
-reviewed_by_expert: true
-expert_name: Иванов И.И.
-```
-
-**Проверка синтаксиса:**
+**После правок** рекомендуется запустить:
 ```bash
-python -c "from core.kb_loader import load_kb; load_kb('services/hvs/kb/knowledge_base.yaml')"
+python clean_kbs.py
 ```
+Это очистит YAML от лишних метаданных и приведёт его к чистому виду.
 
 ---
 
@@ -87,7 +95,7 @@ python -c "from core.kb_loader import load_kb; load_kb('services/hvs/kb/knowledg
 Жилец: "у меня холодные батареи"
             │
             ▼
-    [Диспетчер-агент]
+    [Диспетчер-агент] (GPT-4o via OpenRouter)
     route_to_service(service="heating", confidence=0.95)
             │
             ▼ (confidence >= 0.7)
@@ -96,7 +104,7 @@ python -c "from core.kb_loader import load_kb; load_kb('services/hvs/kb/knowledg
     ← BASE_TOOLS + heating_kb промпт ←
             │
             ▼
-    Диагностический диалог
+    Диагностический диалог в Streamlit
 ```
 
 ---

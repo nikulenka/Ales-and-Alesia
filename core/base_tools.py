@@ -13,7 +13,7 @@ Tools:
 """
 
 from __future__ import annotations
-from typing import Literal
+from typing import Literal, Optional, Union
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 
@@ -38,15 +38,15 @@ class UpdateDiagnosisInput(BaseModel):
         default_factory=list,
         description="ID факторов, которые жилец опроверг"
     )
-    hot_tap_temp: TemperatureLevel | None = Field(
+    hot_tap_temp: Optional[TemperatureLevel] = Field(
         default=None,
         description="Уровень температуры в горячем кране, если жилец его описал"
     )
-    scope_is_building: bool | None = Field(
+    scope_is_building: Optional[bool] = Field(
         default=None,
         description="True если проблема у дома/стояка, False если только в квартире"
     )
-    suspected_symptom_id: str | None = Field(
+    suspected_symptom_id: Optional[str] = Field(
         default=None,
         description="ID симптома, если уже удалось определить"
     )
@@ -62,9 +62,9 @@ def update_diagnosis(
     service: str,
     confirmed_factor_ids: list[str],
     ruled_out_factor_ids: list[str],
-    hot_tap_temp: TemperatureLevel | None,
-    scope_is_building: bool | None,
-    suspected_symptom_id: str | None,
+    hot_tap_temp: Optional[TemperatureLevel],
+    scope_is_building: Optional[bool],
+    suspected_symptom_id: Optional[str],
 ) -> dict:
     """Обновляет диагностическую сессию на основе новых данных от жильца.
     Вызывай после каждого информативного ответа жильца.
@@ -93,7 +93,7 @@ class CauseScore(BaseModel):
     score: float = Field(description="Итоговая вероятность после учёта подтверждённых факторов")
     severity: Severity
     resolution: str
-    note: str | None = None
+    note: Optional[str] = None
 
 
 class GetCausesRankedInput(BaseModel):
@@ -228,8 +228,8 @@ def get_next_question(
 class CreateTicketInput(BaseModel):
     service: str = Field(description="ID сервиса")
     apartment_info: str = Field(description="Что жилец сообщил о себе (адрес, квартира, имя если дал)")
-    symptom_id: str | None = Field(default=None, description="ID установленного симптома")
-    top_cause_id: str | None = Field(default=None, description="ID наиболее вероятной причины")
+    symptom_id: Optional[str] = Field(default=None, description="ID установленного симптома")
+    top_cause_id: Optional[str] = Field(default=None, description="ID наиболее вероятной причины")
     urgency: Literal["emergency", "urgent", "normal"] = Field(
         default="normal",
         description="emergency=авария, urgent=горячей нет совсем, normal=дискомфорт"
@@ -249,8 +249,8 @@ class TicketOutput(BaseModel):
 def create_ticket(
     service: str,
     apartment_info: str,
-    symptom_id: str | None,
-    top_cause_id: str | None,
+    symptom_id: Optional[str],
+    top_cause_id: Optional[str],
     urgency: str,
     notes: str,
 ) -> dict:

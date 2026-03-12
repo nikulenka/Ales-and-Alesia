@@ -1,14 +1,15 @@
 import yaml
+from typing import Union
 from pathlib import Path
 from core.models import KnowledgeBase
 
-def load_kb(yaml_path: str | Path) -> KnowledgeBase:
+def load_kb(yaml_path: Union[str, Path]) -> KnowledgeBase:
     """Загружает базу знаний из YAML-файла и валидирует через Pydantic."""
     with open(yaml_path, 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
     return KnowledgeBase(**data)
 
-def load_all_kbs(services_dir: str | Path = "services") -> dict[str, KnowledgeBase]:
+def load_all_kbs(services_dir: Union[str, Path] = "services") -> dict[str, KnowledgeBase]:
     """Загружает все базы знаний для каждого сервиса."""
     kbs = {}
     base_path = Path(services_dir)
