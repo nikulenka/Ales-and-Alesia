@@ -143,7 +143,7 @@ def get_causes_ranked(
         scored.append(CauseScore(
             cause_id=cause.id,
             title=cause.title,
-            category=cause.category.value,
+            category=cause.category,
             score=round(score, 3),
             severity=cause.severity,
             resolution=cause.resolution,
@@ -327,7 +327,7 @@ def explain_cause(service: str, cause_id: str, symptom_id: str) -> dict:
         "plain_language_note": cause.note,
         "severity": cause.severity.value,
         "resolution": cause.resolution,
-        "category": cause.category.value,
+        "category": cause.category,
     }
 
 
