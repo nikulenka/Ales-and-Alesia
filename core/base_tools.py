@@ -240,6 +240,8 @@ class CreateTicketInput(BaseModel):
 
 class TicketOutput(BaseModel):
     ticket_id: str
+    tenant_address: str
+    tenant_phone: str
     summary: str
     urgency: str
     assignee: str
@@ -272,19 +274,16 @@ def create_ticket(
 
     assignees = {
         "emergency": "Аварийная служба (немедленно)",
-        "urgent": "Дежурный слесарь ИТП",
-        "normal": "Слесарь-сантехник (плановый выход)",
+        "urgent": "Дежурный специалист",
+        "normal": "Специалист (плановый выход)",
     }
 
-    summary = f"[ГВС] {symptom.title if symptom else 'Проблема с горячей водой'}"
+    summary = f"[{service.upper()}] {symptom.title if symptom else 'Новая заявка'}"
     if cause_title:
         summary += f" — предв. причина: {cause_title}"
 
-    resident_msg_map = {
-        "emergency": "Заявка передана в аварийную службу. Специалист выедет в течение 1 часа.",
-        "urgent": "Заявка зарегистрирована. Дежурный слесарь займётся сегодня.",
-        "normal": "Заявка принята. Мастер придёт в ближайший рабочий день — вам позвонят.",
-    }
+    # Стандартное сообщение без обещаний времени
+    standard_message = "Заявка сформирована и передана специалистам. С вами свяжутся."
 
     ticket = TicketOutput(
         ticket_id=ticket_id,
@@ -292,8 +291,8 @@ def create_ticket(
         tenant_phone=tenant_phone,
         summary=summary,
         urgency=urgency,
-        assignee=assignees[urgency],
-        resident_message=resident_msg_map[urgency],
+        assignee=assignees.get(urgency, "Специалист"),
+        resident_message=standard_message,
     )
     return ticket.model_dump()
 
