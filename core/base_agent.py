@@ -64,9 +64,11 @@ def get_system_prompt(service_id: str, kb: KnowledgeBase) -> str:
 Шаг 3: get_causes_ranked.
 Шаг 4: get_next_question (задавать строго ОДИН вопрос).
 Шаг 5: Повторять 2-4 пока не наберётся уверенность.
-Шаг 6: explain_cause + create_ticket если нужен мастер.
+Шаг 6: ПЕРЕД ВЫЗОВОМ create_ticket ТЫ ОБЯЗАН СПРОСИТЬ У ПОЛЬЗОВАТЕЛЯ ЕГО АДРЕС (квартира, дом) И НОМЕР ТЕЛЕФОНА! БЕЗ ЭТОГО НЕ ВЫЗЫВАЙ create_ticket!
+Шаг 7: Вызови explain_cause.
+Шаг 8: Вызови create_ticket. Когда заявка создана, скажи пользователю, что он может скачать её в виде JSON.
 
-ВАЖНО: Ты MUST NOT ставить диагноз без достаточных данных.
+ВАЖНО: Ты MUST NOT ставить диагноз без достаточных данных. Ты MUST NEVER вызывать create_ticket без адреса и телефона!
 """
 
 class AgentState(BaseModel):

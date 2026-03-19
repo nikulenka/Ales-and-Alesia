@@ -120,6 +120,25 @@ if user_input:
                 with tools_placeholder.expander("Технические детали (Tool Calls)", expanded=False):
                     for tc in tool_calls_info:
                         st.code(f"{tc['name']}({tc['args']})")
+            
+            # Ищем результат выполнения create_ticket для отрисовки кнопки скачивания
+            ticket_msgs = [m for m in result["messages"] if getattr(m, "type", "") == "tool" and getattr(m, "name", "") == "create_ticket"]
+            if ticket_msgs:
+                import json
+                last_ticket_content = ticket_msgs[-1].content
+                try:
+                    # Пытаемся красиво отформатировать
+                    parsed_ticket = json.loads(last_ticket_content)
+                    pretty_ticket = json.dumps(parsed_ticket, ensure_ascii=False, indent=2)
+                except:
+                    pretty_ticket = str(last_ticket_content)
+                    
+                st.download_button(
+                    label="📥 Скачать оформленную заявку (JSON)",
+                    data=pretty_ticket,
+                    file_name="ticket_details.json",
+                    mime="application/json"
+                )
 
             st.session_state.messages.append({
                 "role": "assistant",
