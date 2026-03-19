@@ -249,7 +249,8 @@ class TicketOutput(BaseModel):
 @tool("create_ticket", args_schema=CreateTicketInput)
 def create_ticket(
     service: str,
-    apartment_info: str,
+    tenant_address: str,
+    tenant_phone: str,
     symptom_id: Optional[str],
     top_cause_id: Optional[str],
     urgency: str,
