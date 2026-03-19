@@ -24,10 +24,15 @@ from pydantic import BaseModel, Field
 # ══════════════════════════════════════════════
 
 class ServiceType(str, Enum):
-    HVS = "hvs"
+    WATER_SUPPLY = "water_supply"
+    SEWERAGE = "sewerage"
+    ELECTRICITY_SUPPLY = "electricity_supply"
+    ELEVATOR_MANAGEMENT = "elevator_management"
+    GAS_SUPPLY = "gas_supply"
+    TELEPHONE_SERVICE = "telephone_service"
+    LANDSCAPING = "landscaping"
+    ENTRANCE_CLEANING = "entrance_cleaning"
     HEATING = "heating"
-    COLD_WATER = "cold_water"
-    ELECTRICITY = "electricity"
 
 class TemperatureLevel(str, Enum):
     """Субъективная шкала температуры воды.
@@ -102,7 +107,7 @@ class DiagnosticAction(BaseModel):
 class Cause(BaseModel):
     """Причина неисправности — один узел в таблице симптом→причина."""
     id: str = Field(..., description="Код причины, напр. 'C_E1_BOILER_NO_CHECK_VALVE'")
-    category: CauseCategory
+    category: str
     title: str = Field(..., description="Краткое название причины")
     description: str = Field(..., description="Подробное описание механизма")
     note: Annotated[Optional[str], Field(
@@ -151,9 +156,9 @@ class Symptom(BaseModel):
     )] = None
 
     # Температура в горячем кране при этом симптоме
-    hot_tap_temp: TemperatureLevel
+    hot_tap_temp: Optional[TemperatureLevel] = None
     # Есть ли вообще холодная вода
-    cold_water_present: bool = True
+    cold_water_present: Optional[bool] = None
 
     # Связанные факторы и причины
     primary_factors: list[ObservableFactor] = Field(default_factory=list)

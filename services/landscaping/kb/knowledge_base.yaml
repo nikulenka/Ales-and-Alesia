@@ -1,0 +1,39 @@
+version: 1.0.0
+reviewed_by_expert: false
+symptoms:
+- id: SYM_LAND_GARBAGE
+  code: Б1
+  title: Переполнены мусорные контейнеры
+  description: Мусор валяется вокруг баков, контейнеры не вывезены.
+  primary_factors:
+  - id: F_LAND_FULL_BINS
+    type: primary
+    description: Контейнеры для ТБО переполнены.
+  secondary_factors:
+  - id: SF_LAND_DAYS
+    type: temporal
+    description: Сколько дней не было вывоза?
+    eliciting_question: Как давно мусоровоз не приезжал забирать контейнеры?
+  possible_causes:
+  - id: C_LAND_TRUCK_FAIL
+    category: external
+    title: Задержка вывоза ТБО оператором
+    description: Мусоровоз сломался или нарушен график регионального оператора.
+    prior_probability: 0.8
+    severity: medium
+    confirming_factors:
+    - SF_LAND_DAYS
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Направить запрос региональному оператору по вывозу ТБО о срыве графика.
+  - id: C_LAND_CAR_BLOCK
+    category: neighbor
+    title: Запаркован подъезд к контейнерам
+    description: Мусоровоз не может подъехать к площадке из-за машин жильцов.
+    prior_probability: 0.2
+    severity: medium
+    confirming_factors: []
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Информировать дворника и участкового для поиска владельца авто.
+  default_severity: medium

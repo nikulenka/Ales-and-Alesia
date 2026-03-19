@@ -1,0 +1,43 @@
+version: 1.0.0
+reviewed_by_expert: false
+symptoms:
+- id: SYM_ELEV_STUCK
+  code: Л1
+  title: Застревание лифта с пассажиром
+  description: Лифт остановился между этажами, внутри находятся люди.
+  primary_factors:
+  - id: F_ELEV_STOPPED
+    type: primary
+    description: Кабина остановилась, двери не открываются.
+  secondary_factors:
+  - id: SF_ELEV_PEOPLE
+    type: scope
+    description: Есть ли внутри люди?
+    eliciting_question: Вы находитесь внутри кабины? Сколько вас человек?
+  - id: SF_ELEV_LIGHT
+    type: equipment
+    description: Есть ли свет в кабине?
+    eliciting_question: Свет в кабине горит или полностью темно?
+  possible_causes:
+  - id: C_ELEV_DOORS
+    category: equipment
+    title: Сбой привода дверей
+    description: Двери не смогли закрыться до конца или заблокированы.
+    prior_probability: 0.5
+    severity: high
+    confirming_factors: []
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Вызов электромеханика по лифтам для эвакуации пассажиров (норматив 30 минут).
+  - id: C_ELEV_POWER_CUT
+    category: external
+    title: Отключение электроэнергии
+    description: Пропало напряжение на вводе в дом.
+    prior_probability: 0.3
+    severity: high
+    confirming_factors:
+    - SF_ELEV_LIGHT
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Эвакуация пассажиров, ожидание включения электроэнергии.
+  default_severity: critical

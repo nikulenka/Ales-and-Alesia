@@ -70,7 +70,7 @@ if user_input:
         # 1. Если сервис ещё не определён — работает Диспетчер
         if not st.session_state.service:
             with st.spinner("Диспетчер анализирует..."):
-                dispatch_result: DispatchResult = route_query(user_input)
+                dispatch_result: DispatchResult = route_query(st.session_state.messages)
                 
             if dispatch_result.service and dispatch_result.confidence >= 0.7:
                 st.session_state.service = dispatch_result.service.value

@@ -1,0 +1,39 @@
+version: 1.0.0
+reviewed_by_expert: false
+symptoms:
+- id: SYM_GAS_SMELL
+  code: Г1
+  title: Запах газа
+  description: Отчетливый запах газа на кухне, в подъезде или на улице.
+  primary_factors:
+  - id: F_GAS_ODOR
+    type: primary
+    description: Запах одоранта (этилмеркаптана)
+  secondary_factors:
+  - id: SF_GAS_LOCATION
+    type: scope
+    description: Где пахнет газом?
+    eliciting_question: "Где конкретно вы чувствуете запах: возле плиты, на всем этаже, возле дома?"
+  possible_causes:
+  - id: C_GAS_LEAK_APT
+    category: apartment
+    title: Утечка газа в квартире
+    description: Неисправность шланга, крана или газовой плиты.
+    prior_probability: 0.6
+    severity: critical
+    confirming_factors: []
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: АВАРИЯ! Инструктаж жильца (не включать свет, проветрить, выйти). Вызов 104/112.
+  - id: C_GAS_LEAK_RISER
+    category: riser
+    title: Утечка на внутридомовом газопроводе
+    description: Утечка на стояке или фасадном газопроводе.
+    prior_probability: 0.4
+    severity: critical
+    confirming_factors:
+    - SF_GAS_LOCATION
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: АВАРИЯ! Срочный выезд аварийной бригады горгаза.
+  default_severity: critical

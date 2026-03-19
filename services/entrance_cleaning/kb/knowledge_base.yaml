@@ -1,0 +1,39 @@
+version: 1.0.0
+reviewed_by_expert: false
+symptoms:
+- id: SYM_ENT_DIRTY
+  code: У1
+  title: Грязь в подъезде
+  description: На лестничных клетках давно не мыли, валяется мусор.
+  primary_factors:
+  - id: F_ENT_NO_WASH
+    type: primary
+    description: Отсутствие регулярной уборки мест общего пользования.
+  secondary_factors:
+  - id: SF_ENT_FLOORS
+    type: scope
+    description: На каких этажах грязно?
+    eliciting_question: Грязно только на вашем этаже или по всему подъезду от первого этажа?
+  possible_causes:
+  - id: C_ENT_STAFF_SHORTAGE
+    category: contractor
+    title: Отсутствие уборщицы
+    description: Клининговая компания не вывела персонал на объект.
+    prior_probability: 0.7
+    severity: medium
+    confirming_factors:
+    - SF_ENT_FLOORS
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Передача заявки мастеру участка для организации внеплановой уборки и проверки графика.
+  - id: C_ENT_VANDALISM
+    category: neighbor
+    title: Вандализм жильцов
+    description: Мусор был оставлен жильцами (например, после ремонта) вне графика уборки.
+    prior_probability: 0.3
+    severity: low
+    confirming_factors: []
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Разовая заявка на уборку строительного мусора (возможно, за счет нарушителя).
+  default_severity: low

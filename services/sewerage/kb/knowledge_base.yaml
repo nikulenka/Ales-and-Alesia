@@ -1,0 +1,39 @@
+version: 1.0.0
+reviewed_by_expert: false
+symptoms:
+- id: SYM_SEW_BLOCKAGE
+  code: К1
+  title: Засор канализации
+  description: Вода не уходит в раковине, ванне или унитазе.
+  primary_factors:
+  - id: F_SEW_NO_DRAIN
+    type: primary
+    description: Стоки не уходят
+  secondary_factors:
+  - id: SF_SEW_SCOPE
+    type: scope
+    description: Затронута только одна точка или вся квартира? У соседей есть проблема?
+    eliciting_question: Вода не уходит только в раковине, или во всех сливах в квартире? У соседей снизу нормально?
+  possible_causes:
+  - id: C_SEW_APT_BLOCK
+    category: apartment
+    title: Внутриквартирный засор
+    description: Засорился сифон или внутриквартирная разводка канализации.
+    prior_probability: 0.8
+    severity: medium
+    confirming_factors: []
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Рекомендовать жильцу прочистить сифон или вызвать сантехника (услуга платная).
+  - id: C_SEW_RISER_BLOCK
+    category: riser
+    title: Засор по стояку
+    description: Засорился общий стояк канализации, возможен излив у соседей снизу.
+    prior_probability: 0.2
+    severity: critical
+    confirming_factors:
+    - SF_SEW_SCOPE
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Срочная аварийная заявка на прочистку стояка.
+  default_severity: high

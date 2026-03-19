@@ -3,29 +3,28 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from core.base_agent import create_model
 from core.models import DispatchResult
 
-DISPATCHER_PROMPT = """Ты — интеллектуальный маршрутизатор (Диспетчер) заявок в службе ЖКХ.
-Твоя задача — проанализировать сообщение жильца и определить, в какую службу его направить.
+import os
 
-Доступные службы:
-- hvs: Горячее водоснабжение (недостаточная температура воды горячего стояка)
-- heating: Отопление (холодные батареи, трубы отопления)
-- cold_water: Холодное водоснабжение и канализация (нет воды, засоры, протечки холодной воды)
-- electricity: Электричество (нет света, искрит розетка, выбивает автоматы)
+AGENT_MD_PATH = os.path.join(os.path.dirname(__file__), "Agent.md")
 
-Если уверен в выборе (confidence >= 0.7), заявка будет направлена специалисту.
-Если нет, можешь задать уточняющий вопрос или направить на диспетчера-человека, вернув null/None в service.
-"""
+def get_dispatcher_prompt() -> str:
+    with open(AGENT_MD_PATH, "r", encoding="utf-8") as f:
+        return f.read()
 
-def route_query(user_message: str) -> DispatchResult:
-    """Определяет, к какому сервису относится запрос."""
-    # Используем with_structured_output для получения строгого ответа Pydantic
-    model = create_model().bind_tools([]) # снимаем tools, если они были привязаны по умолчанию
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+
+def route_query(messages_history: list[dict]) -> DispatchResult:
+    """Определяет, к какому сервису относится запрос, учитывая контекст диалога."""
+    model = create_model().bind_tools([])
     structured_model = model.with_structured_output(DispatchResult)
     
-    messages = [
-        SystemMessage(content=DISPATCHER_PROMPT),
-        HumanMessage(content=user_message)
-    ]
+    messages = [SystemMessage(content=get_dispatcher_prompt())]
     
+    for msg in messages_history:
+        if msg["role"] == "user":
+            messages.append(HumanMessage(content=msg["content"]))
+        elif msg["role"] == "assistant":
+            messages.append(AIMessage(content=msg["content"]))
+            
     result = structured_model.invoke(messages)
     return result

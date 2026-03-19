@@ -1,0 +1,45 @@
+version: 1.0.0
+reviewed_by_expert: false
+symptoms:
+- id: SYM_TEL_NO_RING
+  code: Д1
+  title: Не звонит домофон
+  description: При наборе квартиры с улицы вызов не проходит или идет сброс.
+  primary_factors:
+  - id: F_TEL_APT_CALL_FAIL
+    type: primary
+    description: Сброс вызова при наборе номера квартиры.
+  secondary_factors:
+  - id: SF_TEL_NEIGHBORS
+    type: scope
+    description: У других квартир работает?
+    eliciting_question: Вызов не проходит только к вам, или ко всем соседям в подъезде тоже?
+  - id: SF_TEL_MAGNET
+    type: equipment
+    description: Дверь подъезда закрыта магнитом?
+    eliciting_question: А сама дверь подъезда сейчас примагничена, или открыта настежь?
+  possible_causes:
+  - id: C_TEL_TUBE_BROKEN
+    category: apartment
+    title: Неисправна трубка в квартире
+    description: Обрыв провода в трубке или поломка механизма снятия.
+    prior_probability: 0.6
+    severity: low
+    confirming_factors: []
+    ruling_out_factors:
+    - SF_TEL_NEIGHBORS
+    - SF_TEL_MAGNET
+    recommended_actions: []
+    resolution: Оформление заявки на ремонт трубки домой (возможно, платно).
+  - id: C_TEL_PANEL_BROKEN
+    category: equipment
+    title: Сломана вызывная панель
+    description: Нет питания на панели или сбой матрицы домофона.
+    prior_probability: 0.4
+    severity: medium
+    confirming_factors:
+    - SF_TEL_NEIGHBORS
+    ruling_out_factors: []
+    recommended_actions: []
+    resolution: Вызов мастера по ремонту домофонов на весь подъезд.
+  default_severity: low
