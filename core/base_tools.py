@@ -227,7 +227,8 @@ def get_next_question(
 
 class CreateTicketInput(BaseModel):
     service: str = Field(description="ID сервиса")
-    apartment_info: str = Field(description="Что жилец сообщил о себе (адрес, квартира, имя если дал)")
+    tenant_address: str = Field(description="ВАЖНО: Точный адрес жильца.ЗАПРЕЩЕНО выдумывать! Если жилец ещё не назвал адрес, ОБЯЗАТЕЛЬНО сначала спроси его.")
+    tenant_phone: str = Field(description="ВАЖНО: Номер телефона жильца. ЗАПРЕЩЕНО выдумывать! Если жилец ещё не назвал телефон, ОБЯЗАТЕЛЬНО сначала спроси его.")
     symptom_id: Optional[str] = Field(default=None, description="ID установленного симптома")
     top_cause_id: Optional[str] = Field(default=None, description="ID наиболее вероятной причины")
     urgency: Literal["emergency", "urgent", "normal"] = Field(
@@ -286,6 +287,8 @@ def create_ticket(
 
     ticket = TicketOutput(
         ticket_id=ticket_id,
+        tenant_address=tenant_address,
+        tenant_phone=tenant_phone,
         summary=summary,
         urgency=urgency,
         assignee=assignees[urgency],
